@@ -6,7 +6,7 @@ Fiamma Committee CLI is a BTC Staking Command Line Tool for BITVM2 Challenges on
 
 ### From GitHub Releases
 
-1. Visit the [GitHub Releases page](https://github.com/your-repo/fiamma-committee-cli/releases).
+1. Visit the [GitHub Releases page](https://github.com/fiamma-chain/fiamma-committee-cli/releases).
 2. Download the binary file for your operating system:
    - Linux x86-64: `fcli-linux-x86-64`
    - macOS Intel: `fcli-mac-intel`
@@ -36,7 +36,7 @@ To build the CLI from source, ensure you have Rust and Cargo installed. Then fol
 
 1. Clone the repository:
 ```
-git clone https://github.com/your-repo/fiamma-committee-cli.git
+git clone https://github.com/fiamma-chain/fiamma-committee-cli.git
 cd fiamma-committee-cli
 ```
 
