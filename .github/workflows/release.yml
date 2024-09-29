@@ -1,4 +1,4 @@
-name: Ola Compiler Release
+name: Fiamma Committee CLI Release
 on:
   push:
     tags:
@@ -7,6 +7,9 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+
+permissions:
+  contents: write
 
 jobs:
 

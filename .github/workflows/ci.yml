@@ -2,7 +2,8 @@ name: CI checks
 
 on:
   pull_request:
-    branches: [ "main", "develop"]
+  push:
+    branches: [ "main"]
 
 env:
   CARGO_TERM_COLOR: always
