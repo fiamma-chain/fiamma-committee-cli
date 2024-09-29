@@ -1,6 +1,6 @@
 use crate::transaction::{FiammaTransaction, TransactionType};
 
-#[derive(Debug, Clone, sqlx::FromRow)]
+#[derive(Debug, Clone)]
 pub struct StorageFiammaTransaction {
     pub tx_id: Vec<u8>,
     pub tx_type: i64,
