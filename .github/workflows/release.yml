@@ -1,0 +1,100 @@
+name: Ola Compiler Release
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+
+  linux-x86-64:
+    name: Linux x86-64
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive   
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: rustfmt
+    - name: Build
+      run: cargo build --release
+    - name: Upload binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/fcli
+        asset_name: fcli-linux-x86-64
+        tag: ${{ github.ref }} 
+        overwrite: true    
+  mac-intel:
+    name: Mac Intel
+    runs-on: macos-latest
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive   
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: rustfmt 
+    - name: Build
+      run: cargo build --release
+    - name: Upload binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/fcli
+        asset_name: fcli-mac-intel
+        tag: ${{ github.ref }}
+        overwrite: true      
+  macos-arm:
+    name: Mac ARM
+    runs-on: macos-latest-xlarge
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive  
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: rustfmt 
+    - name: Build
+      run: cargo build --release
+    - name: Upload binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/fcli
+        asset_name: fcli-mac-arm
+        tag: ${{ github.ref }}
+        overwrite: true     
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive   
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: rustfmt
+    - name: Build
+      run: cargo build --release
+    - name: Upload binary
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: target/release/fcli.exe
+        asset_name: fcli-windows.exe
+        tag: ${{ github.ref }}
+        overwrite: true  

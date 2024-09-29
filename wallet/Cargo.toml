@@ -1,0 +1,13 @@
+[package]
+name = "wallet"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+web3_decl = { path = "../web3_decl", default-features = false, features = [
+    "client",
+] }
+types = { path = "../types" }
+thiserror = "1.0"
+bitcoin = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm", features = ["rand-std"] }
+anyhow = "1"

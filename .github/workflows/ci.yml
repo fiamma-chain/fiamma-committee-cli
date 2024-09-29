@@ -1,0 +1,25 @@
+name: CI checks
+
+on:
+  pull_request:
+    branches: [ "main", "develop"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  
+  lints:
+    name: Lints
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout sources 
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive  
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: rustfmt
+    - name: Cargo fmt check
+      run: cargo fmt --all -- --check

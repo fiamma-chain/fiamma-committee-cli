@@ -1,0 +1,4 @@
+http_port: 33000
+http_url: http://127.0.0.1:33000
+max_batch_request_size: 200
+max_response_body_size_mb: 10

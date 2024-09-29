@@ -1,0 +1,9 @@
+[package]
+name = "transactions"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+types = { path = "../types" }
+bitcoin = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm", features = ["rand-std", "bitcoinconsensus"] }
+anyhow = "1"

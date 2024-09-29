@@ -1,0 +1,33 @@
+[package]
+name = "fcli"
+version = "0.1.0"
+edition = "2021"
+authors = ["developer@fiammachain.io"]
+description = "Command line interface for Fiamma Committee"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+transactions = { path = "../transactions" }
+wallet = { path = "../wallet" }
+types = { path = "../types" }
+bitcoin_client = { path = "../bitcoin_client" }
+web3_decl = { path = "../web3_decl", default-features = false, features = [
+    "client",
+] }
+clap = { version = "4.4.7", features = ["derive", "env", "string"] }
+clap_complete = "4.4.4"
+thiserror = "1.0"
+num-bigint = { version = "0.4", features = ["rand"] }
+num-traits = "0.2"
+num-integer = "0.1.44"
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_derive = { version = "1.0" }
+shellexpand = "3.1.0"
+anyhow = "1.0.75"
+colored = "2.0.0"
+tokio = { version = "1.38.0", features = ["full"] }
+rpassword = "7.2.0"
+hex = "0.4.3"
+bitcoin = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm", features = ["rand-std"] }

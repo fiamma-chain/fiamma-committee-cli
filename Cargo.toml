@@ -1,0 +1,20 @@
+[workspace]
+members = ["types", "config", "web3_decl", "cli", "transactions", "wallet", "bitcoin_client"]
+resolver = "2"
+
+[patch.crates-io]
+base58check = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm"}
+bitcoin = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm"}
+bitcoin_hashes = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm"}
+bitcoin-internals = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm"}
+bitcoin-io = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm"}
+bitcoin-units = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm"}
+
+# ark-ff = { git = "https://github.com/zulu-network/arkworks-algebra.git",  branch = "bitvm"}
+# ark-ec = { git = "https://github.com/zulu-network/arkworks-algebra.git",  branch = "bitvm"}
+# ark-serialize = { git = "https://github.com/zulu-network/arkworks-algebra.git",  branch = "bitvm"}
+# ark-poly = { git = "https://github.com/zulu-network/arkworks-algebra.git",  branch = "bitvm"}
+# ark-ff = { git = "https://github.com/fiamma-chain/algebra", branch = "feat/poring_from_antalpha" }
+# ark-ec = { git = "https://github.com/fiamma-chain/algebra", branch = "feat/poring_from_antalpha" }
+# ark-serialize = { git = "https://github.com/fiamma-chain/algebra", branch = "feat/poring_from_antalpha" }
+# ark-poly = { git = "https://github.com/fiamma-chain/algebra", branch = "feat/poring_from_antalpha" }
