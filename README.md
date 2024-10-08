@@ -56,7 +56,7 @@ fcli register start --validator-key <VALIDATOR_KEY> --txid <TXID> --vout <VOUT> 
 ```
 
 ```
-fcli register finish --validator-key <VALIDATOR_KEY> --txid <TXID> --vout <VOUT> --private-key <PRIVATE_KEY>
+fcli register finish --validator-key <VALIDATOR_KEY> --private-key <PRIVATE_KEY>
 ```
 
 
