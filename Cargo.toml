@@ -1,5 +1,5 @@
 [workspace]
-members = ["types", "config", "web3_decl", "cli", "transactions", "wallet", "bitcoin_client"]
+members = ["types","web3_decl", "cli", "transactions", "wallet", "bitcoin_client"]
 resolver = "2"
 
 [patch.crates-io]

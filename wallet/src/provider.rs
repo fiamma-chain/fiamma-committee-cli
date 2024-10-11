@@ -1,6 +1,4 @@
-use std::str::FromStr;
-
-use bitcoin::{Address, Network};
+use bitcoin::Network;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProviderParams {
@@ -39,22 +37,6 @@ impl ProviderParams {
 
     pub fn is_dev(&self) -> bool {
         self.http_endpoint == "http://54.65.137.66:33000"
-    }
-
-    pub fn get_burn_address(&self) -> Address {
-        match self.network {
-            Network::Regtest => Address::from_str(
-                "bcrt1pmdx8nnpllj3x750zzfqmjvedv34swuka06vda8qau6csnyx2hq9s6p89qf",
-            )
-            .expect("failed to create burn address")
-            .assume_checked(),
-            Network::Signet => {
-                Address::from_str("tb1px3zjhc60v2y7p8a2nkv2zymnwr0wx4pwurgktc9ly5yfu3vk6fjq05ey7n")
-                    .expect("failed to create burn address")
-                    .assume_checked()
-            }
-            _ => panic!("other bitcoin network not supported"),
-        }
     }
 
     pub fn bitcoin_url(&self) -> String {
