@@ -3,8 +3,9 @@ use bitcoin::{ScriptBuf, Txid};
 use jsonrpsee::{core::RpcResult, proc_macros::rpc};
 use types::{
     challenge::{ChallengeInfoRes, ChallengeRequest, FinishChallengeRequest},
+    circuit::RegisterCircuitRequest,
     disprove::DisproveRequest,
-    register::QueryAssertTxReq,
+    register::{CircuitTx, QueryAssertTxReq},
     FinishRegisterRequest, RegisterRequest,
 };
 
@@ -45,12 +46,18 @@ pub trait CommitteeNamespace {
     #[method(name = "getCommitteeChallengeTx")]
     async fn get_committee_challenge_tx(&self, request: ChallengeRequest) -> RpcResult<String>;
 
-    #[method(name = "getCommitteeAssertTx")]
-    async fn get_committee_assert_tx(&self, request: QueryAssertTxReq) -> RpcResult<String>;
+    #[method(name = "getCommitteeAssertTxs")]
+    async fn get_committee_assert_txs(
+        &self,
+        request: QueryAssertTxReq,
+    ) -> RpcResult<Vec<CircuitTx>>;
 
     #[method(name = "finishChallenge")]
     async fn finish_challenge(&self, request: FinishChallengeRequest) -> RpcResult<Txid>;
 
     #[method(name = "disprove")]
     async fn disprove(&self, request: DisproveRequest) -> RpcResult<()>;
+
+    #[method(name = "registerCircuit")]
+    async fn register_circuit(&self, request: RegisterCircuitRequest) -> RpcResult<u32>;
 }

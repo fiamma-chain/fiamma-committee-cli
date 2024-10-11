@@ -2,7 +2,9 @@ use bitcoin::Transaction;
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumString};
 
-#[derive(Debug, EnumString, Display, PartialEq, Eq)]
+use crate::transaction::TransactionType;
+
+#[derive(Debug, Clone, Copy, EnumString, Display, PartialEq, Eq)]
 pub enum RegisterStatus {
     #[strum(serialize = "not_exist")]
     NotExist,
@@ -14,6 +16,10 @@ pub enum RegisterStatus {
     StakeTxConfirmed,
     #[strum(serialize = "registered")]
     Registered,
+    #[strum(serialize = "unsigned")]
+    Unsigned,
+    #[strum(serialize = "unregistered")]
+    Unregistered,
     #[strum(serialize = "challenging")]
     Challenging,
     #[strum(serialize = "slashed")]
@@ -34,7 +40,7 @@ pub struct RegisterInfo {
     pub stake_tx: Transaction,
     pub assert_tx_hex: String,
     pub challenge_tx_hex: String,
-    // pub disprove_tx_hex: String,
+    pub synthesiser_circuit_id: u32,
 }
 
 impl RegisterInfo {
@@ -45,7 +51,7 @@ impl RegisterInfo {
         stake_tx: Transaction,
         assert_tx_hex: &str,
         challenge_tx_hex: &str,
-        // disprove_tx_hex: &str,
+        synthesiser_circuit_id: u32,
     ) -> Self {
         Self {
             validator_key: validator_key.to_string(),
@@ -54,7 +60,7 @@ impl RegisterInfo {
             stake_tx,
             assert_tx_hex: assert_tx_hex.to_string(),
             challenge_tx_hex: challenge_tx_hex.to_string(),
-            // disprove_tx_hex: disprove_tx_hex.to_string(),
+            synthesiser_circuit_id,
         }
     }
 }
@@ -68,6 +74,23 @@ impl QueryAssertTxReq {
     pub fn new(validator_key: &str) -> Self {
         Self {
             validator_key: validator_key.to_string(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct CircuitTx {
+    pub vk_hash: String,
+    pub tx_type: TransactionType,
+    pub tx_hex: String,
+}
+
+impl CircuitTx {
+    pub fn new(vk_hash: &str, tx_type: TransactionType, tx_hex: &str) -> Self {
+        Self {
+            vk_hash: vk_hash.to_string(),
+            tx_type,
+            tx_hex: tx_hex.to_string(),
         }
     }
 }

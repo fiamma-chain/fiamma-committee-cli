@@ -1,3 +1,5 @@
+
+
 use crate::transaction::{FiammaTransaction, TransactionType};
 
 #[derive(Debug, Clone)]
@@ -14,12 +16,17 @@ impl From<StorageFiammaTransaction> for FiammaTransaction {
         let tx_id = String::from_utf8(tx.tx_id.clone()).unwrap_or_else(|e| {
             panic!(
                 "Transaction ID {:#?} is invalid for transaction. Error: {}",
-                tx.tx_id, e
+                tx.tx_id,
+                e.to_string()
             )
         });
         let tx_type = TransactionType::from(tx.tx_type as i32);
         let data = String::from_utf8(tx.data).unwrap_or_else(|e| {
-            panic!("Transaction ID {:#?} has invalid data. Error: {}", tx_id, e)
+            panic!(
+                "Transaction ID {:#?} has invalid data. Error: {}",
+                tx_id,
+                e.to_string()
+            )
         });
         let ext_info = tx.ext_info.and_then(|v| v.as_str().map(|s| s.to_string()));
         Self {

@@ -1,9 +1,12 @@
-use bitcoin::{consensus::encode, Address, KnownHrp, OutPoint, Transaction, TxOut};
+use bitcoin::{
+    consensus::encode, Address, KnownHrp, OutPoint, PrivateKey, ScriptBuf, Transaction, TxOut,
+};
 use clap::Parser;
 use transactions::disprove::DisproveTransaction;
 use types::{
     constants::{CONNECTOR_C_INDEX, DUST_AMOUNT},
-    register::QueryAssertTxReq,
+    register::{CircuitTx, QueryAssertTxReq},
+    transaction::TransactionType,
     FinishRegisterRequest, RegisterRequest,
 };
 use wallet::{provider::ProviderParams, signer::Signer, Wallet};
@@ -119,37 +122,24 @@ impl Register {
                 let script_pubkey = multi_sig_addr.script_pubkey();
 
                 let request = QueryAssertTxReq::new(&args.validator_key);
-                let assert_tx = wallet
-                    .get_committee_assert_tx(request)
+                let assert_txs = wallet
+                    .get_committee_assert_txs(request)
                     .await
                     .expect("failed to get assert tx of validator");
-                let assert_tx = encode::deserialize_hex::<Transaction>(&assert_tx)
-                    .expect("failed to decode assert tx");
 
-                let assert_tx_id = assert_tx.compute_txid();
+                let disprove_txs = assert_txs
+                    .iter()
+                    .map(|assert_tx| {
+                        create_disprove_tx(
+                            &aux.private_key,
+                            script_pubkey.clone(),
+                            multi_sig_script.clone(),
+                            assert_tx,
+                        )
+                    })
+                    .collect::<Vec<CircuitTx>>();
 
-                let out_point = vec![OutPoint {
-                    txid: assert_tx_id,
-                    vout: CONNECTOR_C_INDEX,
-                }];
-
-                let tx_out = vec![TxOut {
-                    value: DUST_AMOUNT,
-                    script_pubkey: script_pubkey.clone(),
-                }];
-
-                let input_utxos: Vec<(OutPoint, TxOut)> =
-                    out_point.into_iter().zip(tx_out.into_iter()).collect();
-
-                let disprove_tx = DisproveTransaction::new(
-                    aux.private_key,
-                    input_utxos,
-                    multi_sig_script.clone(),
-                );
-
-                let disprove_tx_hex = encode::serialize_hex(&disprove_tx.tx);
-
-                let request = FinishRegisterRequest::new(&args.validator_key, &disprove_tx_hex);
+                let request = FinishRegisterRequest::new(&args.validator_key, &disprove_txs);
 
                 let register_id = wallet
                     .finish_register(request)
@@ -160,6 +150,41 @@ impl Register {
             }
         }
         Ok(())
+    }
+}
+
+fn create_disprove_tx(
+    private_key: &PrivateKey,
+    script_pubkey: ScriptBuf,
+    multi_sig_script: ScriptBuf,
+    circuit_assert_tx: &CircuitTx,
+) -> CircuitTx {
+    let assert_tx = encode::deserialize_hex::<Transaction>(&circuit_assert_tx.tx_hex)
+        .expect("failed to decode assert tx");
+
+    let assert_tx_id = assert_tx.compute_txid();
+
+    let out_point = vec![OutPoint {
+        txid: assert_tx_id,
+        vout: CONNECTOR_C_INDEX,
+    }];
+
+    let tx_out = vec![TxOut {
+        value: DUST_AMOUNT,
+        script_pubkey,
+    }];
+
+    let input_utxos: Vec<(OutPoint, TxOut)> =
+        out_point.into_iter().zip(tx_out.into_iter()).collect();
+
+    let disprove_tx = DisproveTransaction::new(private_key, input_utxos, multi_sig_script);
+
+    let disprove_tx_hex = encode::serialize_hex(&disprove_tx.tx);
+
+    CircuitTx {
+        vk_hash: circuit_assert_tx.vk_hash.clone(),
+        tx_type: TransactionType::DisproveTx,
+        tx_hex: disprove_tx_hex,
     }
 }
 

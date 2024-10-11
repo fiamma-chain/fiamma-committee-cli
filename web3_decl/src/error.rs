@@ -23,6 +23,8 @@ pub enum Web3Error {
     ChallengeNodeError(String),
     #[error("DisproveError error {0}")]
     DisproveError(String),
+    #[error("RegisterCircuitError error {0}")]
+    RegisterCircuitError(String),
 }
 
 /// Client RPC error with additional details: the method name and arguments of the called method.
@@ -158,14 +160,14 @@ where
 /// Extension trait allowing to add context to client RPC calls. Can be used on any future resolving to `Result<_, ClientError>`.
 pub trait ClientRpcContext: Sized {
     /// Adds basic context information: the name of the invoked RPC method.
-    fn rpc_context(self, method: &'static str) -> ClientCallWrapper<'static, Self>;
+    fn rpc_context(self, method: &'static str) -> ClientCallWrapper<Self>;
 }
 
 impl<T, F> ClientRpcContext for F
 where
     F: Future<Output = Result<T, ClientError>>,
 {
-    fn rpc_context(self, method: &'static str) -> ClientCallWrapper<'static, Self> {
+    fn rpc_context(self, method: &'static str) -> ClientCallWrapper<Self> {
         ClientCallWrapper {
             inner: self,
             method,

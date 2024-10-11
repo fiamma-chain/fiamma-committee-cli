@@ -3,8 +3,9 @@ use bitcoin::{ScriptBuf, Txid};
 use errors::ClientError;
 use signer::Signer;
 use types::challenge::{ChallengeInfoRes, ChallengeRequest, FinishChallengeRequest};
+use types::circuit::RegisterCircuitRequest;
 use types::disprove::DisproveRequest;
-use types::register::QueryAssertTxReq;
+use types::register::{CircuitTx, QueryAssertTxReq};
 use types::{FinishRegisterRequest, RegisterRequest};
 use web3_decl::jsonrpsee::http_client::{HttpClient, HttpClientBuilder};
 use web3_decl::namespaces::committee::CommitteeNamespaceClient;
@@ -102,12 +103,12 @@ where
             .context("Failed to query challenge transaction")
     }
 
-    pub async fn get_committee_assert_tx(
+    pub async fn get_committee_assert_txs(
         &self,
         request: QueryAssertTxReq,
-    ) -> anyhow::Result<String> {
+    ) -> anyhow::Result<Vec<CircuitTx>> {
         self.provider
-            .get_committee_assert_tx(request)
+            .get_committee_assert_txs(request)
             .await
             .context("Failed to query assert transaction")
     }
@@ -124,5 +125,12 @@ where
             .disprove(request)
             .await
             .map_err(|e| panic!("failed to disprove: {}", e.to_string()))
+    }
+
+    pub async fn register_circuit(&self, request: RegisterCircuitRequest) -> anyhow::Result<u32> {
+        self.provider
+            .register_circuit(request)
+            .await
+            .map_err(|e| panic!("failed to register circuit: {}", e.to_string()))
     }
 }

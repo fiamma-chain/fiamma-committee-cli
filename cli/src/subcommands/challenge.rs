@@ -12,7 +12,9 @@ use bitcoin_client::api_client::BitcoinRpcClient;
 use clap::Parser;
 use types::{
     challenge::{ChallengeRequest, FinishChallengeRequest},
+    circuit::{CircuitInfo, CircuitType},
     constants::{CHALLENGE_FEE_AMOUNT, DUST_AMOUNT},
+    file::read_vk_from_path,
 };
 use wallet::{provider::ProviderParams, signer::Signer, Wallet};
 use web3_decl::jsonrpsee::http_client::HttpClientBuilder;
@@ -50,12 +52,22 @@ pub enum Action {
 pub struct ChallengeProof {
     #[clap(short, long, help = "Proof id of challenged proof")]
     proof_id: String,
+    #[clap(short, long, help = "circuit's verifier key path")]
+    vk_path: String,
+    #[clap(short, long, help = "Circuit type")]
+    circuit_type: String,
 }
 
 #[derive(Debug, Parser, Clone)]
 pub struct FillChallenge {
     #[clap(short, long, help = "Proof id of challenged proof")]
     proof_id: String,
+
+    #[clap(short, long, help = "circuit's verifier key path")]
+    vk_path: String,
+
+    #[clap(short, long, help = "Circuit type")]
+    circuit_type: String,
 
     #[clap(short, long, help = "Assert input's transaction id")]
     txid: String,
@@ -89,7 +101,11 @@ impl Challenge {
 
         match self.action {
             Action::Start(args) => {
-                let request = ChallengeRequest::new(&args.proof_id);
+                let vk = read_vk_from_path(&args.vk_path)?;
+                let circuit_type = CircuitType::from_str(&args.circuit_type)?;
+                let circuit_info = CircuitInfo::new(&vk, circuit_type);
+                let request = ChallengeRequest::new(&args.proof_id, &circuit_info.vk_hash);
+
                 wallet
                     .start_challenge(request)
                     .await
@@ -100,12 +116,19 @@ impl Challenge {
                 );
             }
             Action::Status(args) => {
-                let request = ChallengeRequest::new(&args.proof_id);
+                let vk = read_vk_from_path(&args.vk_path)?;
+                let circuit_type = CircuitType::from_str(&args.circuit_type)?;
+                let circuit_info = CircuitInfo::new(&vk, circuit_type);
+                let request = ChallengeRequest::new(&args.proof_id, &circuit_info.vk_hash);
                 let res = wallet.challenge_status(request).await;
                 println!("{}", res.unwrap());
             }
             Action::Finish(args) => {
-                let request = ChallengeRequest::new(&args.proof_id);
+                let vk = read_vk_from_path(&args.vk_path)?;
+                let circuit_type = CircuitType::from_str(&args.circuit_type)?;
+                let circuit_info = CircuitInfo::new(&vk, circuit_type);
+
+                let request = ChallengeRequest::new(&args.proof_id, &circuit_info.vk_hash);
                 let challenge_tx = wallet
                     .get_committee_challenge_tx(request)
                     .await

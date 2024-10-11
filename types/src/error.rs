@@ -1,6 +1,7 @@
 use bitcoin::Txid;
 use thiserror::Error;
 
+
 #[derive(Debug, Error)]
 pub enum RegisterNodeError {
     #[error("generate multisig address failed with error: {0}")]
@@ -109,6 +110,10 @@ pub enum RegisterNodeError {
     TweakedCommitteeKeyNotFound,
     #[error("private key of committee {0} is missing")]
     CommitteePrivatekeyNotFound(u32),
+    #[error("invalid disprove tx count, expect {0} but get {1}")]
+    InvalidDisproveTxCount(u32, u32),
+    #[error("verifier key of circuit hash {0} not found")]
+    CircuitVKNotFound(String),
 }
 
 #[derive(Debug, Error)]
@@ -145,10 +150,14 @@ pub enum ChallengeError {
     ChallengeExists(String),
     #[error("Challenge raw committee tx is not ready")]
     ChallengeRawCommitteeTxNotReady,
+    #[error("Circuit of hash {0} is not ready or exist")]
+    CircuitNotRegistered(String),
 }
 
 #[derive(Debug, Error)]
 pub enum DisproveError {
+    #[error("generate multisig address failed with error: {0}")]
+    GenerateMultisigAddressError(String),
     #[error("failed to parse bitcoin network from config with err: {0}")]
     NetworkParseError(String),
     #[error("proof id {0} is missing")]
@@ -179,4 +188,16 @@ pub enum DisproveError {
     TweakedCommitteeKeyNotFound,
     #[error("failed to get tweaked public key of register {0}")]
     TweakedRegisterNotFound(String),
+}
+
+#[derive(Debug, Error)]
+pub enum CircuitError {
+    #[error("invalid circuit with hash {0}")]
+    InvalidCircuitHash(String),
+    #[error("circuit with hash {0} already exists")]
+    CircuitAlreadyExists(String),
+    #[error("circuit with hash {0} not exists")]
+    CircuitNotExists(String),
+    #[error("circuit with hash {0} is invalid")]
+    CircuitInvalid(String),
 }

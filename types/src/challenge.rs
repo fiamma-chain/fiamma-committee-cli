@@ -4,12 +4,14 @@ use strum::{Display, EnumString};
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct ChallengeRequest {
     pub proof_id: String,
+    pub vk_hash: String,
 }
 
 impl ChallengeRequest {
-    pub fn new(proof_id: &str) -> Self {
+    pub fn new(proof_id: &str, vk_hash: &str) -> Self {
         Self {
             proof_id: proof_id.to_string(),
+            vk_hash: vk_hash.to_string(),
         }
     }
 }

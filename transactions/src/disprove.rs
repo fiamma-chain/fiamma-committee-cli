@@ -8,7 +8,7 @@ pub struct DisproveTransaction {
 
 impl DisproveTransaction {
     pub fn new(
-        private_key: PrivateKey,
+        private_key: &PrivateKey,
         input_utxo: Vec<(OutPoint, TxOut)>,
         witness_script: ScriptBuf,
     ) -> Self {

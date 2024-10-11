@@ -1,10 +1,14 @@
+use register::CircuitTx;
 use serde::{Deserialize, Serialize};
 
 pub mod challenge;
+pub mod circuit;
 pub mod committee;
 pub mod constants;
 pub mod disprove;
 pub mod error;
+pub mod file;
+pub mod presigned_transactions;
 pub mod register;
 pub mod storage_transaction;
 pub mod transaction;
@@ -42,15 +46,14 @@ impl RegisterRequest {
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct FinishRegisterRequest {
     pub validator_key: String,
-    pub disprove_tx: Vec<u8>,
+    pub disprove_txs: Vec<CircuitTx>,
 }
 
 impl FinishRegisterRequest {
-    pub fn new(validator_key: &str, disprove_tx: &str) -> Self {
-        let disprove_tx = disprove_tx.as_bytes().to_vec();
+    pub fn new(validator_key: &str, disprove_txs: &[CircuitTx]) -> Self {
         Self {
             validator_key: validator_key.to_string(),
-            disprove_tx,
+            disprove_txs: disprove_txs.to_vec(),
         }
     }
 }

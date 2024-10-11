@@ -10,3 +10,6 @@ strum = { version = "0.24", features = ["derive"] }
 num_enum = "0.6"
 bitcoin = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm", features = ["rand-std", "bitcoinconsensus", "serde"] }
 thiserror = "1.0"
+hex = "0.4.3"
+sha2 = "0.10.8"
+anyhow = "1.0"

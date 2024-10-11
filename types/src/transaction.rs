@@ -1,7 +1,8 @@
 use bitcoin::{consensus::encode, Transaction};
+use serde::{Deserialize, Serialize};
 use strum::{Display, EnumString};
 
-#[derive(Debug, EnumString, Display, Clone)]
+#[derive(Debug, EnumString, Display, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum TransactionType {
     #[strum(serialize = "stake_tx")]
     StakeTx,
