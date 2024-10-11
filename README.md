@@ -52,13 +52,14 @@ cargo build --release
 If you want to run a fiamma node as a validator, you first need to register as a bitvm2 staker using fcli. The registration process requires the use of the following 2 commands to complete.
 
 ```
-fcli register start --validator-key <VALIDATOR_KEY> --txid <TXID> --vout <VOUT> --private-key <PRIVATE_KEY>
+fcli register --network testnet start --validator-key <VALIDATOR_KEY> --txid <TXID> --vout <VOUT> --private-key <PRIVATE_KEY>
 ```
 
 ```
-fcli register finish --validator-key <VALIDATOR_KEY> --private-key <PRIVATE_KEY>
+fcli register --network testnet finish --validator-key <VALIDATOR_KEY> --private-key <PRIVATE_KEY>
 ```
 
+Please refer to the [Fiamma Documentation](https://docs.fiammachain.io/developer-guides/run-a-fiamma-node/become-a-bitvm-staker) for detailed information.
 
 ## Key Features
 
