@@ -174,8 +174,7 @@ fn create_disprove_tx(
         script_pubkey,
     }];
 
-    let input_utxos: Vec<(OutPoint, TxOut)> =
-        out_point.into_iter().zip(tx_out.into_iter()).collect();
+    let input_utxos: Vec<(OutPoint, TxOut)> = out_point.into_iter().zip(tx_out).collect();
 
     let disprove_tx = DisproveTransaction::new(private_key, input_utxos, multi_sig_script);
 

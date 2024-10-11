@@ -1,4 +1,3 @@
-
 use bitcoin::Network;
 
 #[derive(Debug, Clone, PartialEq, Eq)]

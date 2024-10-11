@@ -124,13 +124,13 @@ where
         self.provider
             .disprove(request)
             .await
-            .map_err(|e| panic!("failed to disprove: {}", e.to_string()))
+            .map_err(|e| panic!("failed to disprove: {}", e))
     }
 
     pub async fn register_circuit(&self, request: RegisterCircuitRequest) -> anyhow::Result<u32> {
         self.provider
             .register_circuit(request)
             .await
-            .map_err(|e| panic!("failed to register circuit: {}", e.to_string()))
+            .map_err(|e| panic!("failed to register circuit: {}", e))
     }
 }

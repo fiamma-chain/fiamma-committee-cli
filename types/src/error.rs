@@ -1,7 +1,6 @@
 use bitcoin::Txid;
 use thiserror::Error;
 
-
 #[derive(Debug, Error)]
 pub enum RegisterNodeError {
     #[error("generate multisig address failed with error: {0}")]

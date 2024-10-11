@@ -7,9 +7,9 @@ use bitcoin::{
     psbt::{self, Input, PsbtSighashType},
     secp256k1::{self, Message, SecretKey},
     sighash::{self, SighashCache},
-    taproot, transaction, Amount, EcdsaSighashType, OutPoint, PrivateKey, Psbt,
-    ScriptBuf, SegwitV0Sighash, Sequence, TapLeafHash, TapSighash, TapSighashType, Transaction,
-    TxIn, TxOut, Witness, XOnlyPublicKey,
+    taproot, transaction, Amount, EcdsaSighashType, OutPoint, PrivateKey, Psbt, ScriptBuf,
+    SegwitV0Sighash, Sequence, TapLeafHash, TapSighash, TapSighashType, Transaction, TxIn, TxOut,
+    Witness, XOnlyPublicKey,
 };
 use types::P2trUtxo;
 
@@ -64,7 +64,8 @@ fn generate_bip86_key_spend_tx(
     // The `Prevouts::All` array is used to create the sighash to sign for each input in the
     // `psbt.inputs` array, as such it must be the same length and in the same order as the inputs.
     let mut input_txouts = Vec::<TxOut>::new();
-    for input in [&input_utxo].iter() {
+    {
+        let input = &(&input_utxo);
         input_txouts.push(TxOut {
             value: input.amount_in_sats,
             script_pubkey: ScriptBuf::from_hex(input.script_pubkey)?,
