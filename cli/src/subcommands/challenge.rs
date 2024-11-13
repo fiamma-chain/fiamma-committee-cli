@@ -8,7 +8,7 @@ use bitcoin::{
     taproot, Address, KnownHrp, Network, OutPoint, PrivateKey, ScriptBuf, Sequence, TapLeafHash,
     TapSighashType, Transaction, TxIn, TxOut, Txid, Witness, XOnlyPublicKey,
 };
-use bitcoin_client::api_client::BitcoinRpcClient;
+use bitcoin_client::api_client::MempoolClient;
 use clap::Parser;
 use types::{
     challenge::{ChallengeRequest, FinishChallengeRequest},
@@ -85,6 +85,7 @@ impl Challenge {
             match network.as_str() {
                 "local" => ProviderParams::local(),
                 "dev" => ProviderParams::dev(),
+                "testnet" => ProviderParams::testnet(),
                 _ => {
                     anyhow::bail!("invalid network name")
                 }
@@ -144,9 +145,6 @@ impl Challenge {
                     args.vout,
                     multi_sig_script,
                     ctx.network,
-                    &ctx.bitcoin_url(),
-                    &ctx.bitcoin_username(),
-                    &ctx.bitcoin_password(),
                 );
                 let challenge_tx_str = encode::serialize_hex(&challenge_tx);
                 let request = FinishChallengeRequest::new(&args.proof_id, &challenge_tx_str);
@@ -168,9 +166,6 @@ fn fill_challenger_tx(
     challenger_input_vout: u32,
     multi_sig_script: ScriptBuf,
     network: Network,
-    bitcoin_url: &str,
-    bitcoin_rpc_user: &str,
-    bitcoin_rpc_password: &str,
 ) -> Transaction {
     let secp = bitcoin::secp256k1::Secp256k1::new();
     let multi_sig_address = Address::p2wsh(&multi_sig_script, KnownHrp::from(network));
@@ -191,13 +186,11 @@ fn fill_challenger_tx(
     let challenger_address = Address::p2tr(&secp, internal_key, None, KnownHrp::from(network));
 
     // query challenger's pre tx value
-    let bitcoin_rpc_client =
-        BitcoinRpcClient::new(bitcoin_url, bitcoin_rpc_user, bitcoin_rpc_password)
-            .expect("Failed to create bitcoin rpc client");
+    let bitcoin_rpc_client = MempoolClient::new(network);
 
     let pre_txid = Txid::from_str(challenger_input_txid).expect("failed to parse tx id");
     let pre_tx = bitcoin_rpc_client
-        .get_tx(pre_txid)
+        .get_tx(&pre_txid.to_string())
         .expect("tx_id is not valid");
     let utxo = pre_tx
         .tx_out(challenger_input_vout as usize)

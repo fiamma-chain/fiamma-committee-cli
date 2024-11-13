@@ -40,6 +40,7 @@ impl Disprove {
             match network.as_str() {
                 "local" => ProviderParams::local(),
                 "dev" => ProviderParams::dev(),
+                "testnet" => ProviderParams::testnet(),
                 _ => {
                     anyhow::bail!("invalid network name")
                 }

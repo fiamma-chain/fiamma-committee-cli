@@ -4,7 +4,7 @@ use bitcoin::{
     bip32::Xpriv, consensus::encode, secp256k1, Address, KnownHrp, OutPoint, PrivateKey, PublicKey,
     ScriptBuf, Transaction, TxOut, Txid, XOnlyPublicKey,
 };
-use bitcoin_client::api_client::BitcoinRpcClient;
+use bitcoin_client::api_client::MempoolClient;
 use clap::Parser;
 use transactions::{
     assert::AssertTransaction, challenge::ChallengeTransaction, stake::StakeTransaction,
@@ -99,6 +99,7 @@ impl Tx {
             match network.as_str() {
                 "local" => ProviderParams::local(),
                 "dev" => ProviderParams::dev(),
+                "testnet" => ProviderParams::testnet(),
                 _ => {
                     anyhow::bail!("invalid network name")
                 }
@@ -176,13 +177,10 @@ impl Tx {
         let txid = Txid::from_str(&args.txid).expect("Invalid txid");
         let vout = args.vout;
 
-        let bitcoin_rpc_client = BitcoinRpcClient::new(
-            &ctx.bitcoin_url(),
-            &ctx.bitcoin_username(),
-            &ctx.bitcoin_password(),
-        )
-        .expect("Failed to create bitcoin rpc client");
-        let pre_tx = bitcoin_rpc_client.get_tx(txid).expect("tx_id is not valid");
+        let bitcoin_rpc_client = MempoolClient::new(ctx.network);
+        let pre_tx = bitcoin_rpc_client
+            .get_tx(&txid.to_string())
+            .expect("tx_id is not valid");
         let utxo = pre_tx.tx_out(vout as usize).expect("Invalid vout");
 
         // generate stake tx
