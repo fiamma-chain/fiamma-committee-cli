@@ -11,7 +11,7 @@ use bitcoin::{
 use bitcoin_client::api_client::MempoolClient;
 use clap::Parser;
 use types::{
-    challenge::{ChallengeRequest, FinishChallengeRequest},
+    challenge::{ChallengeRequest, ChallengeStatus, FinishChallengeRequest},
     circuit::{CircuitInfo, CircuitType},
     constants::{CHALLENGE_FEE_AMOUNT, DUST_AMOUNT},
     file::read_vk_from_path,
@@ -43,6 +43,9 @@ pub enum Action {
 
     #[clap(name = "status", about = "Query the started challenge status")]
     Status(ChallengeProof),
+
+    #[clap(name = "info", about = "Query the challenge info")]
+    Info(ChallengeProof),
 
     #[clap(name = "finish", about = "Finish the challenge")]
     Finish(FillChallenge),
@@ -124,6 +127,43 @@ impl Challenge {
                 let res = wallet.challenge_status(request).await;
                 println!("{}", res.unwrap());
             }
+            Action::Info(args) => {
+                let vk = read_vk_from_path(&args.vk_path)?;
+                let circuit_type = CircuitType::from_str(&args.circuit_type)?;
+                let circuit_info = CircuitInfo::new(&vk, circuit_type);
+                let request = ChallengeRequest::new(&args.proof_id, &circuit_info.vk_hash);
+                
+                println!("Starting to poll challenge info...");
+                loop {
+                    match wallet.challenge_info(request.clone()).await {
+                        Ok(res) => {
+                            println!("\nChallenge Status:");
+                            println!("Status: {:?}", res.status);
+                            if res.status == ChallengeStatus::ChallengeNotExist {
+                                println!("Challenge not exist");
+                                break;
+                            } 
+                            if let Some(challenge_txid) = res.challenge_txid {
+                                println!("Challenge txid: {}", challenge_txid);
+                            }
+                            if let Some(assert_txid) = res.assert_txid {
+                                println!("Assert txid: {}", assert_txid);
+                            }
+                            if let Some(txid) = res.disprove_txid {
+                                println!("Disprove txid: {}", txid);
+                                println!("\nChallenge complete - disprove transaction received");
+                                break;
+                            }
+                        }
+                        Err(e) => {
+                            println!("Query error: {:?}", e);
+                            break;
+                        }
+                    }
+                    tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
+                }
+            }
+        
             Action::Finish(args) => {
                 let vk = read_vk_from_path(&args.vk_path)?;
                 let circuit_type = CircuitType::from_str(&args.circuit_type)?;

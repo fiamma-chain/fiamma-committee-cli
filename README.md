@@ -72,6 +72,8 @@ If you want to run a fiamma node as a validator, you first need to register as a
 fcli register --network testnet start --validator-key <VALIDATOR_KEY> --txid <TXID> --vout <VOUT> --private-key <PRIVATE_KEY>
 ```
 
+after executing the above command, you will get a registration number, please wait patiently until the registration is complete. it will take about 10 minutes depending on the bitcoin network.
+
 #### 2.Finish the registration process
 
 ```
