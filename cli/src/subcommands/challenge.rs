@@ -132,7 +132,7 @@ impl Challenge {
                 let circuit_type = CircuitType::from_str(&args.circuit_type)?;
                 let circuit_info = CircuitInfo::new(&vk, circuit_type);
                 let request = ChallengeRequest::new(&args.proof_id, &circuit_info.vk_hash);
-                
+
                 println!("Starting to poll challenge info...");
                 loop {
                     match wallet.challenge_info(request.clone()).await {
@@ -142,7 +142,7 @@ impl Challenge {
                             if res.status == ChallengeStatus::ChallengeNotExist {
                                 println!("Challenge not exist");
                                 break;
-                            } 
+                            }
                             if let Some(challenge_txid) = res.challenge_txid {
                                 println!("Challenge txid: {}", challenge_txid);
                             }
@@ -163,7 +163,7 @@ impl Challenge {
                     tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
                 }
             }
-        
+
             Action::Finish(args) => {
                 let vk = read_vk_from_path(&args.vk_path)?;
                 let circuit_type = CircuitType::from_str(&args.circuit_type)?;

@@ -28,5 +28,4 @@ impl MempoolClient {
         let tx_bytes = hex::decode(response.text()?.trim()).unwrap();
         Ok(consensus::deserialize(&tx_bytes).unwrap())
     }
-
 }
