@@ -22,18 +22,11 @@ impl MempoolClient {
     }
 
     pub fn get_tx(&self, txid: &str) -> Result<Transaction, reqwest::Error> {
-        let url = format!("{}/tx/{}", self.base_url, txid);
-        let response = self.http_client.get(&url).send()?.bytes()?;
+        let url = format!("{}/tx/{}/hex", self.base_url, txid);
+        let response = self.http_client.get(&url).send()?;
 
-        Ok(consensus::deserialize(&response[..]).unwrap())
+        let tx_bytes = hex::decode(response.text()?.trim()).unwrap();
+        Ok(consensus::deserialize(&tx_bytes).unwrap())
     }
 
-    pub fn broadcast_transaction(&self, tx: &Transaction) -> Result<String, reqwest::Error> {
-        let url = format!("{}/tx", self.base_url);
-        let tx_hex = consensus::serialize(tx);
-
-        let response = self.http_client.post(&url).body(tx_hex).send()?.text()?;
-
-        Ok(response) // Returns txid
-    }
 }

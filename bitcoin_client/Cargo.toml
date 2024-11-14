@@ -11,3 +11,4 @@ serde_json = "1.0"
 bitcoin = { git = "https://github.com/rust-bitcoin/rust-bitcoin", branch = "bitvm", features = ["rand-std", "serde"] }
 thiserror = "1.0"
 bitcoincore-rpc = { git = "https://github.com/fiamma-chain/rust-bitcoincore-rpc", branch = "master", features = ["default"] }
+hex = "0.4"
