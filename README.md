@@ -51,24 +51,25 @@ cargo build --release
 ## Usage
 
 ### Explanation of All Command Parameters
-- `--network`: The network to use. Currently, only `testnet` is supported.
-- `--private-key`: The signet btc private key for the validator.
+- `--network`: Currently only supports `testnet` network.
+- `--private-key`: The signet BTC private key used to sign the tx.
 - `--validator-key`: The new validator address for the fiamma chain, you can get the validator address refer to [become a validator](https://docs.fiammachain.io/our-product-suite/bitvm-powered-zkp-verification-layer/developer-guides/run-a-fiamma-node/become-a-validator).
-- `--proof-id`: The proof ID for the challenge process, we provide a test proof id `1735e881fa5e58408e4710a4e8cbea0a7995f029eefdf85d7e59775b0b6c44c5` for you to challenge, you can use it to test the challenge process.
-- `--vk-path`: The path to the verification key for the challenge process, you can get it from the fiamma committee cli repository [vk.bitvm](https://github.com/fiamma-chain/fiamma-committee-cli/blob/main/vk.bitvm).
-- `--circuit-type`: The circuit type for the challenge process. Currently, only `groth16` is supported.
-- `--script-index`: This is the bitvm2 challenge program split script index, this number is fixed and cannot be modified at present.
-- `--reward-address`: The reward signet btc address for the disprove process, if you challenge success, you will get the reward.
-- `--txid`: The signet btc transaction ID for the registration process.
-- `--vout`: The signet btc output index for the registration process.
-   you can get the txid and vout use the following command:
+- `--proof-id`: The proof ID for the challenge process, we provide a test proof id `1735e881fa5e58408e4710a4e8cbea0a7995f029eefdf85d7e59775b0b6c44c5`.
+- `--vk-path`: The path to the verification key for the challenge process, you can obtain it from the fiamma committee cli repository [vk.bitvm](https://github.com/fiamma-chain/fiamma-committee-cli/blob/main/vk.bitvm).
+- `--circuit-type`: The circuit type used for the challenge process. Currently only supports `groth16`.
+- `--script-index`:The script index for the BitVM2 challenge program. This value is fixed and cannot be modified at present.
+- `--reward-address`: The reward signet BTC address for the disprove process, if you challenge success, you will get the reward.
+- `--txid`: The signet BTC transaction ID for the registration process.
+- `--vout`: The signet BTC output index for the registration process.
+   you can obtain the txid and vout use the following command:
    ```bash
    curl -sSL "https://mempool.space/signet/api/address/{signet_btc_address}/utxo"
    ```
 
 ### Register as a BitVM2 Staker/Validator
 
-If you want to run a fiamma node as a validator, you first need to register as a bitvm2 staker using fcli. The registration process requires the use of the following 2 commands to complete.
+To run a Fiamma node as a validator, you must first register as a BitVM2 staker using fcli. The registration process requires executing the following two commands:
+
 
 #### 1.Start the registration process
 
@@ -86,6 +87,7 @@ fcli register --network testnet finish --validator-key <VALIDATOR_KEY> --private
 after executing the above command, the register tx will be broadcasted to the bitcoin network, it will take about 10 minutes for the registration to be complete depending on the bitcoin network.
 
 after the registration is complete, you can become a validator.
+
 ### Challenge Proofs
 
 If you want to challenge a proof , you can use the following command:
@@ -104,14 +106,14 @@ fcli challenge --network testnet finish --proof-id <PROOF_ID> --vk-path <VK_PATH
 
 #### 3. Monitor the challenge process
 
-After you execute the challenge finish command, you can monitor the challenge process by the following command:
+After executing the challenge finish command, you can monitor the challenge process using:
 
 ```
 fcli challenge --network testnet info --proof-id <PROOF_ID> --vk-path <VK_PATH> --circuit-type groth16
 ```
 
-You can see that the console will print out the challenge tx id and committe generated assert tx id and the challenge status
-You should use the tx id to query the [signet explorer](https://mempool.space/signet/tx/d81eccdca492ad1c9e9b4e9dd48fb181eb566bed2949d3b8f13d28ff015e489b) to see if the challenge tx and assert tx is confirmed. 
+The console will display the challenge transaction ID, committee-generated assertion transaction ID, and challenge status.
+You can use the [signet explorer](https://mempool.space/signet/tx/d81eccdca492ad1c9e9b4e9dd48fb181eb566bed2949d3b8f13d28ff015e489b) to verify if the challenge and assertion transactions have been confirmed.
 
 #### 4.Disprove the challenge
 
